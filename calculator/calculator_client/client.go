@@ -3,14 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"go_grcp/greet/greetpb"
+	"go_grcp/calculator/calculatorpb"
 	"google.golang.org/grpc"
 	"log"
 )
 
 func main() {
 
-	fmt.Println("Hello, I'm a client")
+	fmt.Println("Caluculator Client")
 
 	//withInscureはsslで通信するという意味
 	//grcpをセキュアに行うオプション
@@ -21,27 +21,24 @@ func main() {
 
 	//プログラムの最後にdeferでclientを閉める
 	defer cc.Close()
-	c := greetpb.NewGreetServiceClient(cc)
+	c := calculatorpb.NewCalculatorServiceClient(cc)
 	//fmt.Println("Created client: %f", c)
 
 	doUnary(c)
 }
 
 //Unaryでの実行結果
-func doUnary(c greetpb.GreetServiceClient) {
+func doUnary(c calculatorpb.CalculatorServiceClient) {
 	fmt.Println("starting to do a Unary RPC...")
-	req := &greetpb.GreetRequest{
-		Greeting: &greetpb.Greeting{
-			FirstName: "nekomamushi",
-			LastName:  "aaaa"},
+	req := &calculatorpb.SumRequest{
+		FirstNumber:  5,
+		SecondNumber: 40,
 	}
-
-	res, err := c.Greet(context.Background(), req)
+	res, err := c.Sum(context.Background(), req)
 	if err != nil {
-		log.Fatalf("error while calling Greet RPC: %v", err)
+		log.Fatalf("error while calling Sum RPC: %v", err)
 	}
 
 	//実行結果
-	log.Printf("Response from Great: %v", res.Result)
-
+	log.Printf("Response from Sum: %v", res.SumResult)
 }
