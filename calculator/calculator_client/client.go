@@ -27,7 +27,8 @@ func main() {
 
 	//doUnary(c)
 	//doServerStreaming(c)
-	doClientStreaming(c)
+	//doClientStreaming(c)
+
 }
 
 //Unaryでの実行結果
@@ -89,7 +90,5 @@ func doClientStreaming(c calculatorpb.CalculatorServiceClient) {
 	if err != nil {
 		log.Fatalf("Error while receiving response:%v", err)
 	}
-
 	fmt.Printf("the avarage is: %v \n ", res.GetAverage())
-
 }

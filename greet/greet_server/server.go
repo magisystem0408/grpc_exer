@@ -83,7 +83,6 @@ func (*server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) er
 		}
 
 	}
-
 }
 
 func main() {
