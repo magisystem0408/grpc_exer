@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package pycli_goser;
+option go_package="/";
+
+
+message MsgStruct{
+  string message = 1;
+}
+
+
+service Mamushi {
+  rpc PushMsg(MsgStruct)returns(MsgStruct){}
+}
