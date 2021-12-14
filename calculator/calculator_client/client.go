@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"go_grcp/calculator/calculatorpb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 	"log"
 	"time"
@@ -29,8 +31,8 @@ func main() {
 	//doUnary(c)
 	//doServerStreaming(c)
 	//doClientStreaming(c)
-	doBiDiStreaming(c)
-
+	//doBiDiStreaming(c)
+	doErrorUnary(c, -2)
 }
 
 //Unaryでの実行結果
@@ -129,4 +131,27 @@ func doBiDiStreaming(c calculatorpb.CalculatorServiceClient) {
 		close(waitc)
 	}()
 	<-waitc
+}
+
+func doErrorUnary(c calculatorpb.CalculatorServiceClient, n int32) {
+	fmt.Println("Starting to do a square Unary Response RPC...")
+	//	correct code
+	res, err := c.SquareRoot(context.Background(), &calculatorpb.SquareRootRequest{Number: n})
+
+	if err != nil {
+		respErr, ok := status.FromError(err)
+		if ok {
+			fmt.Println(respErr.Message())
+			fmt.Println(respErr.Code())
+			if respErr.Code() == codes.InvalidArgument {
+				fmt.Println("we probably sent a negative number!")
+				return
+			}
+		} else {
+			log.Fatalf("Big error calling squareroller: %v", err)
+			return
+		}
+	}
+
+	fmt.Printf("Result of square root of %v:%v \n", n, res.GetNumberRoot())
 }

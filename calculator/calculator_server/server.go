@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"go_grcp/calculator/calculatorpb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"io"
 	"log"
+	"math"
 	"net"
 )
 
@@ -101,9 +104,25 @@ func (*server) FindMaximum(stream calculatorpb.CalculatorService_FindMaximumServ
 				log.Fatalf("error while sending data to clint %v", err)
 				return err
 			}
-
 		}
 	}
+}
+
+func (*server) SquareRoot(ctx context.Context, req *calculatorpb.SquareRootRequest) (*calculatorpb.SquareRootResponse, error) {
+	fmt.Println("Recieved square root RPC")
+	number := req.GetNumber()
+	
+	//もし受け取った引数が0以下であったらこの処理をする
+	if number < 0 {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			fmt.Sprintf("Received a nagative number:%v", number))
+	}
+
+	//もしステータスコードが200いないであったら実行できるようにする
+	return &calculatorpb.SquareRootResponse{
+		NumberRoot: math.Sqrt(float64(number)),
+	}, nil
 }
 
 func main() {
