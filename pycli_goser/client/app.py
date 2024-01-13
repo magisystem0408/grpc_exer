@@ -1,4 +1,3 @@
-from __future__ import print_function
 import grpc
 
 import mamushi_pb2
